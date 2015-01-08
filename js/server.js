@@ -10,9 +10,20 @@ console.log("Starting dns server on port "+dns_port+" and send to " + url)
 function connected() {
   console.log("connected on " + url)
   server.on('request', function (request, response) {
-    console.log(request)
-    console.log("name: " + request.question[0].name)
-    conn.publish('dns', request.question)
+    // console.log(request)
+    console.log("["+request.address.address+"] class["+request.question[0].class+"] type["+request.question[0].type+"] "+request.question[0].name)
+    conn.publish('dns', { 
+      header: request.header,
+      question: request.question,
+      answer: request.answer,
+      authority: request.authority,
+      additional: request.additional,
+      edns_options: request.edns_options,
+      payload: request.payload,
+      edns: request.edns,
+      edns_version: request.edns_version,
+      address: request.address
+    })
     response.answer.push(dns.A({
       name: request.question[0].name,
       address: '127.0.0.1',
@@ -25,6 +36,7 @@ function connected() {
     console.log(err.stack)
   })
 
+  console.log("Starting on port " +dns_port)
   server.serve(dns_port)
 }
 
