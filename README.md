@@ -1,1 +1,1 @@
-$ docker run -ti -e DNS_PORT=5353 -e AMQP_URL=amqp://localhost2 marcelmaatkamp/docker-node-dns:1.0
+$ docker run --name node-dns -ti --link rabbitmq:rabbitmq -e DNS_PORT=5353 -p 5353:5353/udp -e AMQP_URL=amqp://*:*@rabbitmq marcelmaatkamp/nodejs-dns
