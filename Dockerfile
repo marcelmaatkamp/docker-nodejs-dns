@@ -1,4 +1,4 @@
-FROM dockerfile/nodejs
+FROM node
 MAINTAINER m.maatkamp@gmail.com version: 0.1
 
 # ---
