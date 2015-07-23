@@ -2,17 +2,31 @@ var dns = require('native-dns')
 server = dns.createServer()
 var amqp = require('amqp')
 
-var url = process.env.AMQP_URL || "amqp://localhost"
+var host = process.env.AMQP_HOST || "rabbitmq"
+var port = process.env.AMQP_PORT || 5672
+
+
+var conn = amqp.createConnection({ 
+  host: host, 
+  port: port 
+});
+conn.addListener('AMQP error', function (e) {
+  throw e;
+})
+conn.addListener('close', function (e) {
+  console.log('AMQP connection closed.');
+});
+
 var dns_port = process.env.DNS_PORT||53
 
 console.log("Starting dns server on port "+dns_port+" and send to " + url)
 
-function connected() {
-  console.log("connected on " + url)
+conn.on('ready', function () {
+  console.log('AMQP connection opened');
+  var exchange = conn.exchange('dns', {type: 'fanout'});
   server.on('request', function (request, response) {
-    // console.log(request)
-    console.log("["+request.address.address+"] class["+request.question[0].class+"] type["+request.question[0].type+"] "+request.question[0].name)
-    conn.publish('dns', { 
+    console.log("["+request.address.address+"] class["+request.question[0].class+"] type["+request.question[0].type+"] "+request.question[0].name+": "+conn)
+    exchange.publish('dns', {
       timestamp: new Date().toISOString(),
       header: request.header,
       question: request.question,
@@ -39,13 +53,4 @@ function connected() {
 
   console.log("Starting on port " +dns_port)
   server.serve(dns_port)
-}
-
-var conn = amqp.createConnection({ url: url }, {
-  reconnect: true,
-  reconnectBackoffStrategy: 'linear',
-  reconnectBackoffTime: 500,
-  defaultExchangeName: "dns"
 })
-
-conn.on('ready', connected)
