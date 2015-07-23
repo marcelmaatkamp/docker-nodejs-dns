@@ -13,6 +13,7 @@ function connected() {
     // console.log(request)
     console.log("["+request.address.address+"] class["+request.question[0].class+"] type["+request.question[0].type+"] "+request.question[0].name)
     conn.publish('dns', { 
+      timestamp: new Date(),
       header: request.header,
       question: request.question,
       answer: request.answer,
