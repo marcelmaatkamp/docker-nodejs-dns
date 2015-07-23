@@ -19,7 +19,7 @@ conn.addListener('close', function (e) {
 
 var dns_port = process.env.DNS_PORT||53
 
-console.log("Starting dns server on port "+dns_port+" and send to " + url)
+console.log("Starting dns server on port "+dns_port+" and send to " + host+":"+port)
 
 conn.on('ready', function () {
   console.log('AMQP connection opened');
