@@ -1,15 +1,9 @@
-FROM node
+FROM node:4
 MAINTAINER m.maatkamp@gmail.com version: 0.1
 
-# ---
-# add libraries
+RUN npm install native-dns amqp-ts
 
-RUN npm install native-dns amqp
+EXPOSE 53 
 
-# ---
-# add sources 
-
-ADD js data
-WORKDIR data
-
-ENTRYPOINT      ["node", "server.js"]
+ADD js/server.js .
+CMD ["node", "server.js"]
