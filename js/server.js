@@ -1,7 +1,7 @@
 var dns = require('native-dns');
 var amqp = require("amqp-ts");
 
-var rabbitmq_url = process.env.AMQP_URL || "amqp://localhost"
+var rabbitmq_url = process.env.AMQP_URL || "amqp://rabbitmq"
 var connection = new amqp.Connection(rabbitmq_url);
 var exchange = connection.declareExchange("dns",  'fanout', {durable: true});
 connection.completeConfiguration().then(() => {
@@ -11,7 +11,7 @@ connection.completeConfiguration().then(() => {
   server.on('request', function (request, response) {
     console.log("["+request.address.address+"] class["+request.question[0].class+"] type["+request.question[0].type+"] "+request.question[0].name)
     var message = new amqp.Message({
-      timestamp: new Date().toISOString(),
+      date: { $date : new Date()}, 
       header: request.header,
       question: request.question,
       answer: request.answer,
