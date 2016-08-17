@@ -26,8 +26,8 @@ connection.completeConfiguration().then(() => {
     exchange.send(message);
     response.answer.push(dns.A({
       name: request.question[0].name,
-      address: '127.0.0.1',
-      ttl: 600,
+      address: '93.191.128.252',
+      ttl: 60,
     }))
     response.send()
   })
