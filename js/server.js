@@ -4,6 +4,7 @@ var amqp = require("amqp-ts");
 var rabbitmq_url = process.env.AMQP_URL || "amqp://rabbitmq"
 var connection = new amqp.Connection(rabbitmq_url);
 var exchange = connection.declareExchange("dns",  'fanout', {durable: true});
+var ip_address =  process.env.IP_ADDRESS || '127.0.0.1';
 connection.completeConfiguration().then(() => {
   console.log("succesfull connected at " +rabbitmq_url)
 
@@ -26,7 +27,7 @@ connection.completeConfiguration().then(() => {
     exchange.send(message);
     response.answer.push(dns.A({
       name: request.question[0].name,
-      address: '93.191.128.252',
+      address: p_address,
       ttl: 60,
     }))
     response.send()
